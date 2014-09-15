@@ -1,28 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using NHibernate;
+using NHibernate.Cfg;
+using NHibernate.Cfg.MappingSchema;
+using NHibernate.Mapping.ByCode;
 
-namespace Entities
+namespace Web
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Configuration myConfiguration;
+        private ISessionFactory mySessionFactory;
+        private ISession mySession;
+
         public MainWindow()
         {
             InitializeComponent();
+            Load();
+        }
+
+        protected static HbmMapping GetMappings()
+        {
+            //There is a dynamic way to do this, but for simplicity I chose to hard code
+            var mapper = new ModelMapper();
+
+            mapper.AddMapping<UsersMap>();
+            var mapping = mapper.CompileMappingFor(new[] { typeof(Users) });
+            return mapping;
+        }
+
+        private void Load()
+        {
+            myConfiguration = new Configuration();
+            myConfiguration.Configure();
+            var mapping = GetMappings();
+            myConfiguration.AddDeserializedMapping(mapping, "UsersMap");
+
+            mySessionFactory = myConfiguration.BuildSessionFactory();
+
+
+            mySession = mySessionFactory.OpenSession();
+
+            using (mySession.BeginTransaction())
+            {
+                var user = new Users { Name = "Andrew", Password = "Andrew" };
+                mySession.Save(user);
+
+                mySession.Transaction.Commit();
+            }
         }
     }
 }

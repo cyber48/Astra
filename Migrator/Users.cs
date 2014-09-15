@@ -32,5 +32,4 @@ namespace Migrator
             Alter.Table("Users").AddColumn("Password").AsString().NotNullable();
         }
     }
-
 }

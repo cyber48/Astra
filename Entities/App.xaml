@@ -1,4 +1,4 @@
-﻿<Application x:Class="Entities.App"
+﻿<Application x:Class="Web.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
